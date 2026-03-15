@@ -12,3 +12,9 @@ A simple Telegram bot that generates QR codes from any given text. This bot allo
 
 - Python 3.8+
 - A Telegram account and a Telegram Bot API token
+
+
+## Command notes:
+- python3 -m venv .venv && source .venv/bin/activate
+- pip install -r requirements.txt
+- nohup .venv/bin/python bot.py > bot.log 2>&1 & echo $! > bot.pid
