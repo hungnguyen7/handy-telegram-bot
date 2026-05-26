@@ -56,4 +56,6 @@ Max discount applied: 50,000 VND at 10%
 
 - python3 -m venv .venv && source .venv/bin/activate
 - pip install -r requirements.txt
+- kill $(cat bot.pid)
 - nohup .venv/bin/python bot.py > bot.log 2>&1 & echo $! > bot.pid
+- tail -f bot.log
