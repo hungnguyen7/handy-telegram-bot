@@ -18,6 +18,19 @@ bot = telebot.TeleBot(BOT_TOKEN)
 user_tool_selection = {}
 
 
+def register_bot_commands():
+    commands = [
+        types.BotCommand("start", "Start the bot"),
+        types.BotCommand("help", "Show help for the current tool"),
+        types.BotCommand("tools", "List available tools"),
+        types.BotCommand("use", "Select a tool by key or label"),
+    ]
+    try:
+        bot.set_my_commands(commands)
+    except telebot.apihelper.ApiTelegramException:
+        pass
+
+
 def handle_qr(message):
     qr_code = generate_qr_code(message.text, "qr_code.png")
     with open(qr_code, "rb") as qr_file:
@@ -188,4 +201,5 @@ def handle_message(message):
     TOOLS[selected_tool]["handler"](message)
 
 
+register_bot_commands()
 bot.infinity_polling()
