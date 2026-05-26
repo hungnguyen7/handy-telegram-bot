@@ -1,8 +1,7 @@
-import json
 from urllib import error, parse, request
 
 
-API_BASE_URL = "https://is.gd/create.php"
+API_BASE_URL = "https://tinyurl.com/api-create.php"
 
 
 def extract_url(text):
@@ -34,23 +33,16 @@ def extract_url(text):
 
 
 def fetch_short_url(url):
-    query = parse.urlencode({"format": "json", "url": url})
+    query = parse.urlencode({"url": url})
     api_url = f"{API_BASE_URL}?{query}"
 
     try:
         with request.urlopen(api_url, timeout=10) as response:
-            payload = json.loads(response.read().decode("utf-8"))
+            short_url = response.read().decode("utf-8").strip()
     except error.URLError:
         return None, "Unable to reach URL shortener service."
-    except json.JSONDecodeError:
-        return None, "Invalid response from URL shortener service."
 
-    error_message = payload.get("errormessage")
-    if error_message:
-        return None, error_message
-
-    short_url = payload.get("shorturl")
-    if not short_url:
+    if not short_url or short_url.lower().startswith("error"):
         return None, "URL shortener service error."
 
     return short_url, None

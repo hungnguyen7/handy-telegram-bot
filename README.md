@@ -7,7 +7,7 @@ A simple Telegram bot that supports multiple tools. It currently includes a QR c
 - **Tool Menu**: List and select tools with `/tools` or `/use <tool>`.
 - **QR Codes**: Generate a QR code from any text.
 - **Discount Optimizer**: Calculate the purchase amount needed to reach a max discount cap.
-- **URL Shortener**: Shorten URLs with the is.gd service.
+- **URL Shortener**: Shorten URLs with the TinyURL service.
 
 ## 📋 Prerequisites
 

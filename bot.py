@@ -69,7 +69,7 @@ TOOLS = {
     },
     "shorten": {
         "label": "URL Shortener",
-        "description": "Shorten a URL using the is.gd service.",
+        "description": "Shorten a URL using the TinyURL service.",
         "handler": handle_shortener,
     },
 }
