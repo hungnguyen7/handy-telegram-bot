@@ -7,6 +7,7 @@ A simple Telegram bot that supports multiple tools. It currently includes a QR c
 - **Tool Menu**: List and select tools with `/tools` or `/use <tool>`.
 - **QR Codes**: Generate a QR code from any text.
 - **Discount Optimizer**: Calculate the purchase amount needed to reach a max discount cap.
+- **URL Shortener**: Shorten URLs with the is.gd service.
 
 ## 📋 Prerequisites
 
@@ -51,6 +52,16 @@ Output example:
 Optimal purchase amount: 500,000 VND
 Max discount applied: 50,000 VND at 10%
 ```
+
+### URL Shortener tool
+
+1. Select the tool: `/use shorten`
+2. Send a URL, and the bot will return a shortened link.
+
+Examples:
+
+- `https://example.com/some/long/path`
+- `example.com/some/long/path`
 
 ## Command notes:
 

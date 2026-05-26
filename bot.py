@@ -6,6 +6,7 @@ from telebot import types
 from utils.currency import build_currency_response
 from utils.discount import build_discount_response
 from utils.qr import generate_qr_code
+from utils.shortener import build_shortener_response
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -41,6 +42,15 @@ def handle_currency(message):
     bot.reply_to(message, response)
 
 
+def handle_shortener(message):
+    response, error = build_shortener_response(message.text)
+    if error:
+        bot.reply_to(message, error)
+        return
+
+    bot.reply_to(message, response)
+
+
 TOOLS = {
     "qr": {
         "label": "QR Code",
@@ -56,6 +66,11 @@ TOOLS = {
         "label": "Currency Converter",
         "description": "Convert USD, EUR, JPY, or CNY amounts to VND.",
         "handler": handle_currency,
+    },
+    "shorten": {
+        "label": "URL Shortener",
+        "description": "Shorten a URL using the is.gd service.",
+        "handler": handle_shortener,
     },
 }
 
@@ -81,7 +96,8 @@ def normalize_tool_key(text):
 
 
 def build_tools_keyboard():
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    keyboard = types.ReplyKeyboardMarkup(
+        resize_keyboard=True, one_time_keyboard=False)
     for tool in TOOLS.values():
         keyboard.add(types.KeyboardButton(tool["label"]))
     return keyboard
@@ -146,7 +162,8 @@ def use_tool(message):
         return
 
     set_selected_tool(message.chat.id, tool_key)
-    bot.reply_to(message, f"Selected tool: {TOOLS[tool_key]['label']}. Send me the input.")
+    bot.reply_to(
+        message, f"Selected tool: {TOOLS[tool_key]['label']}. Send me the input.")
 
 
 @bot.message_handler(func=lambda message: True)
@@ -158,7 +175,8 @@ def handle_message(message):
     tool_key = normalize_tool_key(message.text)
     if tool_key:
         set_selected_tool(message.chat.id, tool_key)
-        bot.reply_to(message, f"Selected tool: {TOOLS[tool_key]['label']}. Send me the input.")
+        bot.reply_to(
+            message, f"Selected tool: {TOOLS[tool_key]['label']}. Send me the input.")
         return
 
     selected_tool = get_selected_tool(message.chat.id)
