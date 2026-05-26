@@ -66,7 +66,7 @@ def normalize_tool_key(text):
 
 
 def build_tools_keyboard():
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for tool in TOOLS.values():
         keyboard.add(types.KeyboardButton(tool["label"]))
     return keyboard
