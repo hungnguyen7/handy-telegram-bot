@@ -3,6 +3,7 @@ import os
 import telebot
 from telebot import types
 
+from utils.currency import build_currency_response
 from utils.discount import build_discount_response
 from utils.qr import generate_qr_code
 
@@ -31,6 +32,15 @@ def handle_discount(message):
     bot.reply_to(message, response)
 
 
+def handle_currency(message):
+    response, error = build_currency_response(message.text)
+    if error:
+        bot.reply_to(message, error)
+        return
+
+    bot.reply_to(message, response)
+
+
 TOOLS = {
     "qr": {
         "label": "QR Code",
@@ -41,6 +51,11 @@ TOOLS = {
         "label": "Discount Optimizer",
         "description": "Find purchase amount to reach max discount (X% capped at Y VND).",
         "handler": handle_discount,
+    },
+    "currency": {
+        "label": "Currency Converter",
+        "description": "Convert USD, EUR, JPY, or CNY amounts to VND.",
+        "handler": handle_currency,
     },
 }
 
