@@ -7,6 +7,7 @@ from telebot import types
 from utils.currency import build_currency_response
 from utils.discount import build_discount_response
 from utils.bg_remove import build_background_removed_image
+from utils.sharpen import build_sharpened_image
 from utils.qr import generate_qr_code
 from utils.shortener import build_shortener_response
 
@@ -83,6 +84,23 @@ def handle_background_remove(message):
     bot.send_photo(message.chat.id, output_stream)
 
 
+def handle_sharpen(message):
+    if not message.photo:
+        bot.reply_to(message, "Please send a photo to sharpen.")
+        return
+
+    file_info = bot.get_file(message.photo[-1].file_id)
+    image_bytes = bot.download_file(file_info.file_path)
+    output_bytes, error = build_sharpened_image(image_bytes)
+    if error:
+        bot.reply_to(message, error)
+        return
+
+    output_stream = BytesIO(output_bytes)
+    output_stream.name = "sharpened.png"
+    bot.send_photo(message.chat.id, output_stream)
+
+
 TOOLS = {
     "qr": {
         "label": "QR Code",
@@ -109,7 +127,14 @@ TOOLS = {
         "description": "Remove the background from a photo.",
         "handler": handle_background_remove,
     },
+    "sharpen": {
+        "label": "Image Sharpen",
+        "description": "Sharpen a photo for clearer details.",
+        "handler": handle_sharpen,
+    },
 }
+
+IMAGE_TOOLS = {"bgremove", "sharpen"}
 
 
 def set_selected_tool(chat_id, tool_key):
@@ -215,11 +240,14 @@ def handle_photo(message):
         send_tools_menu(message)
         return
 
-    if selected_tool != "bgremove":
-        bot.reply_to(message, "This tool expects text input. Use /use bgremove for photos.")
+    if selected_tool not in IMAGE_TOOLS:
+        bot.reply_to(
+            message,
+            "This tool expects text input. Use /use bgremove or /use sharpen for photos.",
+        )
         return
 
-    handle_background_remove(message)
+    TOOLS[selected_tool]["handler"](message)
 
 
 @bot.message_handler(content_types=["text"])

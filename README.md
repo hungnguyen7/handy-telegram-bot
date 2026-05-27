@@ -9,6 +9,7 @@ A simple Telegram bot that supports multiple tools. It currently includes a QR c
 - **Discount Optimizer**: Calculate the purchase amount needed to reach a max discount cap.
 - **URL Shortener**: Shorten URLs with the TinyURL service.
 - **Background Remover**: Remove the background from a photo.
+- **Image Sharpen**: Sharpen a photo for clearer details.
 
 ## 📋 Prerequisites
 
@@ -68,6 +69,11 @@ Examples:
 
 1. Select the tool: `/use bgremove`
 2. Send a photo, and the bot will return a PNG with the background removed.
+
+### Image Sharpen tool
+
+1. Select the tool: `/use sharpen`
+2. Send a photo, and the bot will return a sharpened PNG.
 
 ## Command notes:
 
