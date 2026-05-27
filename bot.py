@@ -1,10 +1,12 @@
 from dotenv import load_dotenv
+from io import BytesIO
 import os
 import telebot
 from telebot import types
 
 from utils.currency import build_currency_response
 from utils.discount import build_discount_response
+from utils.bg_remove import build_background_removed_image
 from utils.qr import generate_qr_code
 from utils.shortener import build_shortener_response
 
@@ -64,6 +66,23 @@ def handle_shortener(message):
     bot.reply_to(message, response)
 
 
+def handle_background_remove(message):
+    if not message.photo:
+        bot.reply_to(message, "Please send a photo to remove the background.")
+        return
+
+    file_info = bot.get_file(message.photo[-1].file_id)
+    image_bytes = bot.download_file(file_info.file_path)
+    output_bytes, error = build_background_removed_image(image_bytes)
+    if error:
+        bot.reply_to(message, error)
+        return
+
+    output_stream = BytesIO(output_bytes)
+    output_stream.name = "background_removed.png"
+    bot.send_photo(message.chat.id, output_stream)
+
+
 TOOLS = {
     "qr": {
         "label": "QR Code",
@@ -84,6 +103,11 @@ TOOLS = {
         "label": "URL Shortener",
         "description": "Shorten a URL using the TinyURL service.",
         "handler": handle_shortener,
+    },
+    "bgremove": {
+        "label": "Background Remover",
+        "description": "Remove the background from a photo.",
+        "handler": handle_background_remove,
     },
 }
 
@@ -179,7 +203,26 @@ def use_tool(message):
         message, f"Selected tool: {TOOLS[tool_key]['label']}. Send me the input.")
 
 
-@bot.message_handler(func=lambda message: True)
+@bot.message_handler(content_types=["photo"])
+def handle_photo(message):
+    tool_key = normalize_tool_key(message.caption)
+    if tool_key:
+        set_selected_tool(message.chat.id, tool_key)
+
+    selected_tool = get_selected_tool(message.chat.id)
+    if not selected_tool:
+        bot.reply_to(message, "Please choose a tool first.")
+        send_tools_menu(message)
+        return
+
+    if selected_tool != "bgremove":
+        bot.reply_to(message, "This tool expects text input. Use /use bgremove for photos.")
+        return
+
+    handle_background_remove(message)
+
+
+@bot.message_handler(content_types=["text"])
 def handle_message(message):
     if not message.text:
         bot.reply_to(message, "Please send text input.")
